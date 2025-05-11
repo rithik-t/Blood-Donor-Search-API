@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Donor Search</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        input { padding: 10px; margin: 10px; width: 200px; }
+        button { padding: 10px; cursor: pointer; }
+        #results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Search for Blood Donors</h2>
+    <input type="text" id="bloodGroup" placeholder="Enter Blood Group (e.g., A+)">
+    <button onclick="searchDonors()">Search</button>
+    <div id="results"></div>
+
+    <script>
+        function searchDonors() {
+            const bloodGroup = document.getElementById("bloodGroup").value.trim();
+            if (!bloodGroup) {
+                alert("Please enter a blood group.");
+                return;
+            }
+
+            fetch(`http://127.0.0.1:5000/search?bloodGroup=${encodeURIComponent(bloodGroup)}`)
+            .then(response => response.json())
+            .then(data => {
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+
+                if (data.length === 0) {
+                    resultsDiv.innerHTML = "<p>No donors found.</p>";
+                } else {
+                    data.forEach(donor => {
+                        resultsDiv.innerHTML += `<p><strong>Name:</strong> ${donor.name}, <strong>Contact:</strong> ${donor.contact}</p>`;
+                    });
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
